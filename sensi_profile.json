@@ -1,0 +1,124 @@
+import json
+import urllib.request
+import os
+
+try:
+    import pyautogui  # ប្រើសម្រាប់បញ្ជូនពាក្យបញ្ជាស្វ័យប្រវត្តិ (Key/Action Simulation)
+    HAS_PYAUTOGUI = True
+except ImportError:
+    HAS_PYAUTOGUI = False
+
+def load_data_from_url(url):
+    """មុខងារសម្រាប់ទាញយកទិន្នន័យសញ្ញាពីអ៊ីនធឺណិត (URL JSON file)"""
+    try:
+        with urllib.request.urlopen(url) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            return data
+    except Exception as e:
+        print(f"មិនអាចទាញយកទិន្នន័យពីអ៊ីនធឺណិតបានទេ: {e}")
+        return None
+
+def load_data_from_file(file_path):
+    """មុខងារសម្រាប់អានឯកសារ Profile ផ្ទាល់ខ្លួនដែលមានស្រាប់ក្នុងម៉ាស៊ីន (Local File)"""
+    try:
+        if os.path.exists(file_path):
+            with open(file_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"មិនអាចអានឯកសារ Profile បានទេ: {e}")
+        return None
+    return None
+
+def execute_command_action(command_key):
+    """មុខងារបញ្ជូនពាក្យបញ្ជាទៅកាន់ប្រព័ន្ធ ឬកន្លែងដែលកូដនោះបញ្ជា"""
+    print(f"កំពុងដំណើរការបញ្ជូនពាក្យបញ្ជា: [{command_key}]")
+    
+    # ឧទាហរណ៍នៃការបញ្ជូនពាក្យបញ្ជា (Automation Actions)
+    if HAS_PYAUTOGUI:
+        if command_key == "[Home]":
+            pyautogui.hotkey('ctrl', 'esc') # ឧទាហរណ៍ចុចปຸ່ມ Home/Menu
+        elif command_key == "[Enter]":
+            pyautogui.press('enter')
+        # លោកអ្នកអាចបន្ថែមលក្ខខណ្ឌបញ្ជាផ្សេងៗនៅទីនេះតាមតម្រូវការ
+    else:
+        print("កត់សម្គាល់៖ សូមដំឡើង 라이บรารี pyautogui (pip install pyautogui) ដើម្បីឲ្យវាអាចបញ្ជូនពាក្យបញ្ជាស្វ័យប្រវត្តិបាន។")
+
+# ១. បញ្ជីមូលដ្ឋានដែលមានឈ្មោះ "Sensi iOS🇻🇳" រួមបញ្ចូលទាំងសញ្ញាកូដ និងកូដបញ្ជា
+base_data = {
+    "GroupName": "Sensi iOS🇻🇳",
+    "Replacements": [
+        # --- សញ្ញាកូដប្រព័ន្ធ (Programming Code) ---
+        {"Text": "{", "Replacement": "បើកទង់កង"},
+        {"Text": "}", "Replacement": "បិទទង់កង"},
+        {"Text": "(", "Replacement": "បើកវង់ក្រចក"},
+        {"Text": ")", "Replacement": "បិទវង់ក្រចក"},
+        {"Text": "[", "Replacement": "បើកតង្កៀប"},
+        {"Text": "]", "Replacement": "បិទតង្កៀប"},
+        {"Text": "<", "Replacement": "តូចជាង"},
+        {"Text": ">", "Replacement": "ធំជាង"},
+        {"Text": ";", "Replacement": "ចុចក្បៀស"},
+        {"Text": ":", "Replacement": "ចុចពីរដង"},
+        {"Text": "=", "Replacement": "ស្មើ"},
+        {"Text": "==", "Replacement": "ស្មើគ្នាដាច់ខាត"},
+        {"Text": "!=", "Replacement": "មិនស្មើ"},
+        {"Text": "&&", "Replacement": "និង"},
+        {"Text": "||", "Replacement": "ឬ"},
+        {"Text": "//", "Replacement": "ខមមិនកូដ"},
+        
+        # --- សញ្ញាបញ្ជា និងទិន្នន័យក្នុងហ្គេម (Game Controls & Actions) ---
+        {"Text": "↑", "Replacement": "ដើរទៅមុខ"},
+        {"Text": "↓", "Replacement": "ថយក្រោយ"},
+        {"Text": "←", "Replacement": "ឆ្វេង"},
+        {"Text": "→", "Replacement": "ស្តាំ"},
+        {"Text": "HP:", "Replacement": "កម្លាំងជីវិត"},
+        {"Text": "MP:", "Replacement": "ថាមពលវេទមន្ត"},
+        {"Text": "EXP:", "Replacement": "បទពិសោធន៍"},
+        {"Text": "LVL:", "Replacement": "កម្រិត"},
+        {"Text": "[BTN]", "Replacement": "ប៊ូតុងបញ្ជា"},
+        {"Text": "CRIT", "Replacement": "គ្រីធីខល"},
+
+        # --- កូដបញ្ជាប្រព័ន្ធទូរស័ព្ទទាំងអស់ (All Mobile System & UI Controls) ---
+        {"Text": "[OK]", "Replacement": "យល់ព្រម"},
+        {"Text": "[Cancel]", "Replacement": "បោះបង់"},
+        {"Text": "[Back]", "Replacement": "ថយក្រោយ"},
+        {"Text": "[Home]", "Replacement": "ទំព័រដើម"},
+        {"Text": "[Menu]", "Replacement": "ម៉ឺនុយ"},
+        {"Text": "[Settings]", "Replacement": "ការកំណត់"},
+        {"Text": "[Search]", "Replacement": "ស្វែងរក"},
+        {"Text": "[Share]", "Replacement": "ចែករំលែក"},
+        {"Text": "[Delete]", "Replacement": "លុបចេញ"},
+        {"Text": "[Edit]", "Replacement": "កែប្រែ"},
+        {"Text": "[Save]", "Replacement": "រក្សាទុក"},
+        {"Text": "[Refresh]", "Replacement": "ផ្ទុកទំព័រឡើងវិញ"},
+        {"Text": "[Copy]", "Replacement": "ចម្លង"},
+        {"Text": "[Paste]", "Replacement": "បិទភ្ជាប់"}
+    ]
+}
+
+# -------------------------------------------------------------
+# ២. ទាញយកទិន្នន័យបន្ថែមពីអ៊ីនធឺណិត (ដាក់ Link JSON របស់អ្នកនៅទីនេះ បើមាន)
+# -------------------------------------------------------------
+online_url = ""  # ឧទាហរណ៍៖ "https://example.com/sensi_ios_extra.json"
+if online_url:
+    online_data = load_data_from_url(online_url)
+    if online_data and "Replacements" in online_data:
+        base_data["Replacements"].extend(online_data["Replacements"])
+
+# -------------------------------------------------------------
+# ៣. អានទិន្នន័យបន្ថែមពី Profile ផ្ទាល់ខ្លួនដែលមានស្រាប់ក្នុងម៉ាស៊ីន (Local JSON File)
+# -------------------------------------------------------------
+profile_file = "sensi_profile.json"  # ហ្វាល Profile របស់អ្នក
+profile_data = load_data_from_file(profile_file)
+if profile_data and "Replacements" in profile_data:
+    base_data["Replacements"].extend(profile_data["Replacements"])
+
+# ៤. រក្សាទុករួមបញ្ចូលគ្នាចេញជាហ្វាលចុងក្រោយសម្រាប់ Import ចូល iPhone
+output_filename = "Sensi_iOS_Config.json"
+with open(output_filename, "w", encoding="utf-8") as f:
+    json.dump(base_data, f, ensure_ascii=False, indent=4)
+
+print(f"ជោគជ័យ! បានបង្កើតហ្វាលឈ្មោះ '{output_filename}' ដែលមានឈ្មោះ Group 'Sensi iOS🇻🇳' រួចរាល់ហើយ។")
+
+# សាកល្បងហៅមុខងារបញ្ជូនពាក្យបញ្ជា (Test Action Execution)
+execute_command_action("[Home]")
+ ៩
